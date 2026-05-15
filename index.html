@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Vistaland Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+  :root{
+    --bg:         oklch(0.18 0.022 258);
+    --bg-2:       oklch(0.205 0.025 258);
+    --surface:    oklch(0.235 0.028 258);
+    --surface-h:  oklch(0.27 0.032 258);
+    --border:     oklch(0.33 0.028 258);
+    --border-soft:oklch(0.28 0.025 258);
+    --ink:        oklch(0.97 0.006 258);
+    --ink-2:      oklch(0.82 0.012 258);
+    --muted:      oklch(0.62 0.018 258);
+    --faint:      oklch(0.45 0.018 258);
+    --accent:     oklch(0.78 0.13 232);
+    --accent-2:   oklch(0.55 0.13 232);
+    --accent-soft:oklch(0.78 0.13 232 / 0.14);
+    --grid-tint:  oklch(0.78 0.13 232 / 0.06);
+    --shadow:     0 1px 0 oklch(1 0 0 / 0.04) inset, 0 30px 80px -20px oklch(0 0 0 / 0.6);
+  }
+
+
+  html,body{height:100%}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Geist','Geist Fallback',ui-sans-serif,system-ui,-apple-system,sans-serif;
+    font-feature-settings:"ss01","cv11";
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding:32px 24px 48px;
+    position:relative;
+    overflow-x:hidden;
+  }
+
+  body::before{
+    content:"";
+    position:fixed;inset:0;
+    background-image:radial-gradient(circle at 1px 1px, var(--grid-tint) 1px, transparent 0);
+    background-size:24px 24px;
+    mask-image:radial-gradient(ellipse 70% 60% at 50% 30%, #000 30%, transparent 80%);
+    pointer-events:none;z-index:0;
+  }
+  body::after{
+    content:"";
+    position:fixed;
+    left:50%;top:-200px;
+    width:900px;height:600px;
+    transform:translateX(-50%);
+    background:radial-gradient(ellipse at center, var(--accent-soft), transparent 60%);
+    filter:blur(40px);
+    pointer-events:none;z-index:0;
+  }
+
+  .stage{
+    position:relative;z-index:1;
+    width:100%;max-width:960px;
+    display:flex;flex-direction:column;gap:56px;
+  }
+
+  .topbar{
+    display:flex;align-items:center;justify-content:space-between;
+    color:var(--muted);font-size:12px;
+  }
+  .topbar .brand{display:flex;align-items:center;gap:10px;color:var(--ink-2);}
+  .mark{height:28px;display:inline-flex;align-items:center;}
+  .mark img{height:100%;width:auto;display:block;}
+  .workspace-tag{
+    margin-left:8px;padding:2px 8px;border-radius:999px;
+    border:1px solid var(--border-soft);
+    font-size:10.5px;letter-spacing:.04em;text-transform:uppercase;
+    color:var(--muted);
+    font-family:'Geist Mono', ui-monospace, monospace;
+  }
+  .clock{
+    font-family:'Geist Mono', ui-monospace, monospace;
+    font-size:12px;color:var(--ink-2);
+    display:flex;align-items:center;gap:10px;
+  }
+  .clock .sep{color:var(--faint)}
+  .top-right{display:flex;align-items:center;gap:14px;}
+  .pulse{
+    width:6px;height:6px;border-radius:50%;background:var(--accent);
+    box-shadow:0 0 0 0 var(--accent-soft);
+    animation:pulse 2.4s ease-out infinite;
+  }
+  @keyframes pulse{
+    0%{box-shadow:0 0 0 0 var(--accent-soft)}
+    70%{box-shadow:0 0 0 8px transparent}
+    100%{box-shadow:0 0 0 0 transparent}
+  }
+
+  .hero{display:flex;flex-direction:column;gap:14px;padding-top:24px;}
+  .eyebrow{
+    font-family:'Geist Mono', ui-monospace, monospace;
+    font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--muted);display:flex;align-items:center;gap:10px;
+  }
+  .eyebrow .line{flex:0 0 28px;height:1px;background:var(--border);}
+  h1.title{
+    font-family:'Instrument Serif', 'Times New Roman', serif;
+    font-weight:400;font-size:clamp(48px, 7vw, 88px);
+    line-height:1.06;padding-bottom:6px;letter-spacing:-0.02em;
+    color:var(--ink);max-width:14ch;
+  }
+  h1.title em{font-style:italic;color:var(--accent);font-weight:400;}
+  .lede{
+    max-width:54ch;color:var(--ink-2);
+    font-size:15px;line-height:1.55;margin-top:4px;
+  }
+  .lede b{font-weight:500;color:var(--ink)}
+
+  .section-head{
+    display:flex;align-items:flex-end;justify-content:space-between;
+    border-top:1px solid var(--border-soft);padding-top:18px;margin-bottom:-8px;
+  }
+  .section-head .label{
+    font-family:'Geist Mono', ui-monospace, monospace;
+    font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);
+  }
+  .section-head .count{
+    font-family:'Geist Mono', ui-monospace, monospace;font-size:11px;color:var(--faint);
+  }
+
+  .grid{display:grid;grid-template-columns:repeat(3, 1fr);gap:14px;}
+  @media (max-width:760px){.grid{grid-template-columns:1fr}}
+
+  .card{
+    position:relative;background:var(--surface);
+    border:1px solid var(--border-soft);border-radius:18px;
+    padding:22px 22px 18px;text-decoration:none;color:inherit;
+    display:flex;flex-direction:column;gap:16px;min-height:230px;
+    transition:transform .35s cubic-bezier(.2,.7,.2,1), border-color .25s, background .25s, box-shadow .35s;
+    overflow:hidden;isolation:isolate;
+  }
+  .card::before{
+    content:"";position:absolute;inset:0;
+    background:radial-gradient(120% 80% at 0% 0%, var(--accent-soft), transparent 55%);
+    opacity:0;transition:opacity .35s;z-index:-1;
+  }
+  .card:hover{
+    border-color:var(--border);background:var(--surface-h);
+    transform:translateY(-2px);box-shadow:var(--shadow);
+  }
+  .card:hover::before{opacity:1}
+  .card:hover .arrow{transform:translate(2px,-2px);color:var(--accent)}
+  .card:hover .icon-tile{border-color:var(--accent);color:var(--accent)}
+
+  .card-top{display:flex;align-items:flex-start;justify-content:space-between;}
+  .icon-tile{
+    width:44px;height:44px;border-radius:12px;
+    border:1px solid var(--border);background:var(--bg-2);
+    display:grid;place-items:center;color:var(--ink-2);
+    transition:color .25s, border-color .25s;
+  }
+  .icon-tile svg{width:20px;height:20px;stroke-width:1.6}
+
+  .meta{
+    display:flex;flex-direction:column;align-items:flex-end;gap:6px;
+    font-family:'Geist Mono', ui-monospace, monospace;font-size:10.5px;color:var(--faint);
+  }
+  .badge{
+    display:inline-flex;align-items:center;gap:6px;
+    padding:3px 8px;border-radius:999px;
+    border:1px solid var(--border-soft);background:var(--bg-2);
+    color:var(--ink-2);font-size:10.5px;letter-spacing:.04em;
+  }
+  .badge .dot{width:6px;height:6px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px var(--accent);}
+  .badge.lan .dot{background:var(--faint);box-shadow:none;}
+
+  .card-body{display:flex;flex-direction:column;gap:6px;margin-top:auto}
+  .card-index{
+    font-family:'Geist Mono', ui-monospace, monospace;
+    font-size:10.5px;letter-spacing:.1em;color:var(--faint);
+  }
+  .card-title{font-size:19px;font-weight:500;letter-spacing:-0.012em;color:var(--ink);}
+  .card-desc{font-size:13px;line-height:1.5;color:var(--muted);text-wrap:pretty;}
+
+  .card-foot{
+    display:flex;align-items:center;justify-content:space-between;
+    margin-top:14px;padding-top:14px;border-top:1px dashed var(--border-soft);
+  }
+  .open{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;font-weight:500;color:var(--ink-2);}
+  .open .arrow{
+    display:inline-grid;place-items:center;width:18px;height:18px;border-radius:50%;
+    color:var(--ink-2);transition:transform .25s, color .25s;
+  }
+  .open .arrow svg{width:11px;height:11px;stroke-width:2}
+  .host{
+    font-family:'Geist Mono', ui-monospace, monospace;font-size:10.5px;color:var(--faint);
+    max-width:48%;text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  }
+
+  footer{
+    margin-top:8px;display:flex;align-items:center;justify-content:space-between;
+    color:var(--faint);font-size:11.5px;
+    border-top:1px solid var(--border-soft);padding-top:18px;
+  }
+  footer .credit{font-family:'Geist Mono', ui-monospace, monospace;}
+  footer a{color:var(--ink-2);text-decoration:none;border-bottom:1px dotted var(--faint)}
+
+  .card{
+    background-image:linear-gradient(180deg, oklch(1 0 0 / 0.012), oklch(0 0 0 / 0.04));
+  }
+</style>
+</head>
+<body>
+  <div class="stage">
+
+    <header class="topbar">
+      <div class="brand">
+        <a class="mark" href="#" aria-label="Vistaland Group">
+          <img src="vistaland-logo.png" alt="Vistaland Group">
+        </a>
+        <span class="workspace-tag">Marcomm</span>
+      </div>
+      <div class="top-right">
+        <div class="clock" aria-live="polite">
+          <span class="pulse" aria-hidden="true"></span>
+          <span id="date">—</span>
+          <span class="sep">/</span>
+          <span id="time">—</span>
+        </div>
+      </div>
+    </header>
+
+    <section class="hero">
+      <div class="eyebrow"><span class="line"></span> Internal Tools Hub · v1.0</div>
+      <h1 class="title">Workspace untuk <em>tim Marcomm</em>.</h1>
+      <p class="lede">
+        Kumpulan tool internal untuk pekerjaan harian — <b>monitoring sosial media</b>,
+        <b>produksi konten</b>, dan <b>operasional kantor</b>. Pilih salah satu di bawah.
+      </p>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <span class="label">Tools</span>
+        <span class="count">03 / 03 aktif</span>
+      </div>
+
+      <div class="grid" style="margin-top:18px">
+
+        <a class="card" href="https://ig-monitor-vistaland.vercel.app" target="_blank" rel="noopener">
+          <div class="card-top">
+            <div class="icon-tile" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 20V10"/><path d="M9 20V4"/><path d="M15 20v-8"/><path d="M21 20V8"/>
+                <path d="M3 20h18"/>
+              </svg>
+            </div>
+            <div class="meta">
+              <span class="badge"><span class="dot"></span>Live</span>
+              <span>30 akun</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <span class="card-index">01 — Monitoring</span>
+            <div class="card-title">IG Tracker</div>
+            <div class="card-desc">Monitor follower &amp; engagement 30 akun Instagram Vistaland Group secara harian.</div>
+          </div>
+          <div class="card-foot">
+            <span class="open">Buka <span class="arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M8 7h9v9"/></svg></span></span>
+            <span class="host">ig-monitor-vistaland</span>
+          </div>
+        </a>
+
+        <a class="card" href="https://vistaland-thumbnail-editor.vercel.app/" target="_blank" rel="noopener">
+          <div class="card-top">
+            <div class="icon-tile" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="4" width="18" height="16" rx="2"/>
+                <circle cx="9" cy="10" r="1.6"/>
+                <path d="M21 16l-5-5-9 9"/>
+              </svg>
+            </div>
+            <div class="meta">
+              <span class="badge"><span class="dot"></span>Live</span>
+              <span>web app</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <span class="card-index">02 — Konten</span>
+            <div class="card-title">Thumbnail Editor</div>
+            <div class="card-desc">Buat &amp; edit thumbnail konten properti Vistaland dengan template siap pakai.</div>
+          </div>
+          <div class="card-foot">
+            <span class="open">Buka <span class="arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M8 7h9v9"/></svg></span></span>
+            <span class="host">thumbnail-editor</span>
+          </div>
+        </a>
+
+        <a class="card" href="http://192.168.7.11:5000/" target="_blank" rel="noopener">
+          <div class="card-top">
+            <div class="icon-tile" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M6 9V3h12v6"/>
+                <rect x="3" y="9" width="18" height="9" rx="2"/>
+                <rect x="6" y="14" width="12" height="7" rx="1"/>
+                <circle cx="17.5" cy="12" r=".8" fill="currentColor"/>
+              </svg>
+            </div>
+            <div class="meta">
+              <span class="badge lan"><span class="dot"></span>LAN only</span>
+              <span>:5000</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <span class="card-index">03 — Operasional</span>
+            <div class="card-title">Print Internal</div>
+            <div class="card-desc">Kirim dokumen ke printer jaringan internal dari komputer mana saja di kantor.</div>
+          </div>
+          <div class="card-foot">
+            <span class="open">Buka <span class="arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M8 7h9v9"/></svg></span></span>
+            <span class="host">192.168.7.11</span>
+          </div>
+        </a>
+
+      </div>
+    </section>
+
+    <footer>
+      <span class="credit">© 2026 Vistaland Group</span>
+      <span>Made by <a href="#" target="_blank" rel="noopener">Irvandi</a></span>
+    </footer>
+  </div>
+
+<script>
+  const dateEl = document.getElementById('date');
+  const timeEl = document.getElementById('time');
+  const months = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+  const days   = ['Min','Sen','Sel','Rab','Kam','Jum','Sab'];
+  function tick(){
+    const d = new Date();
+    const pad = n => String(n).padStart(2,'0');
+    dateEl.textContent = `${days[d.getDay()]}, ${pad(d.getDate())} ${months[d.getMonth()]} ${d.getFullYear()}`;
+    timeEl.textContent = `${pad(d.getHours())}:${pad(d.getMinutes())} WIB`;
+  }
+  tick(); setInterval(tick, 30000);
+
+</script>
+</body>
+</html>
