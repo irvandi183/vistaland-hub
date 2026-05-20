@@ -250,7 +250,7 @@
     <section>
       <div class="section-head">
         <span class="label">Tools</span>
-        <span class="count">03 / 03 aktif</span>
+        <span class="count" id="aktif-count">— / — aktif</span>
       </div>
 
       <div class="grid" style="margin-top:18px">
@@ -378,6 +378,41 @@
   }
   tick(); setInterval(tick, 30000);
 
+  // Dynamic active-card counter
+  async function probeUrl(url, timeoutMs) {
+    const ctrl = new AbortController();
+    const t = setTimeout(() => ctrl.abort(), timeoutMs);
+    try {
+      await fetch(url, { mode: 'no-cors', signal: ctrl.signal });
+      clearTimeout(t);
+      return true;
+    } catch {
+      clearTimeout(t);
+      return false;
+    }
+  }
+
+  async function updateActiveCount() {
+    const cards = Array.from(document.querySelectorAll('a.card[href]'));
+    const total = cards.length;
+    const countEl = document.getElementById('aktif-count');
+    countEl.textContent = `… / ${total} aktif`;
+
+    const results = await Promise.all(
+      cards.map(c => probeUrl(c.getAttribute('href'), 4000))
+    );
+    const active = results.filter(Boolean).length;
+    countEl.textContent = `${active} / ${total} aktif`;
+
+    // Dim dot on unreachable cards
+    cards.forEach((card, i) => {
+      const dot = card.querySelector('.dot');
+      if (dot) dot.style.background = results[i] ? '' : '#6b7280';
+    });
+  }
+
+  updateActiveCount();
+  setInterval(updateActiveCount, 60000);
 </script>
 </body>
 </html>
